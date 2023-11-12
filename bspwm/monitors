@@ -1,0 +1,104 @@
+#! /bin/sh
+#
+# Laptop Monitor: "eDP-1-1"
+# Hdmi Monitor: "HDMI-0"
+
+SINGLE_MONITOR=`cat /tmp/single_monitor.txt`
+
+monitor_add() {
+  if [[ "$1" == "HDMI-0" ]];
+  then
+    for desktop in $(bspc query -D --names -m "$2" | tail -n 5);
+    do
+      bspc desktop "$desktop" --to-monitor "$1"
+    done
+    bspc desktop Desktop --remove
+  else
+    for desktop in $(bspc query -D --names -m "$2" | head -n 5);
+    do
+      bspc desktop "$desktop" --to-monitor "$1"
+    done
+    bspc desktop Desktop --remove
+  fi
+}
+
+monitor_remove() {
+  bspc monitor "$1" -a Desktop
+  for desktop in $(bspc query -D -m "$1");
+  do
+    bspc desktop "$desktop" --to-monitor "$2"
+  done
+#   bspc desktop Desktop --remove
+  bspc monitor $1 -r
+  bspc monitor "$2" -o I II III IV V VI VII VIII IX X
+}
+
+on_change_monitor_setup() {
+    if [[ $(xrandr -q | grep "HDMI-0 connected") ]];
+    # monitor connected
+    then
+      if $SINGLE_MONITOR;
+      then
+        # single monitor setup
+        xrandr --output eDP-1-1 --off \
+               --output HDMI-0 --primary --mode 1920x1080 --rate 143.98 --pos 0x0 --rotate normal
+        if [[ $(bspc query -D -m "HDMI-0" | wc -l) -lt 10 ]];
+        then
+            monitor_remove "eDP-1-1" "HDMI-0"
+        fi       
+        nitrogen --set-auto $HOME/.local/share/wallpapers/DaSadWeb/primary.png
+      else
+        # dual monitor setup
+        xrandr --output eDP-1-1 --mode 1920x1080 --rate 59.98 --pos 0x0 --rotate normal \
+               --output HDMI-0 --primary --mode 1920x1080 --rate 143.98 --pos 1920x0 --rotate normal
+        if [[ $(bspc query -D -m "HDMI-0" | wc -l) -lt 5 ]];
+        then
+            monitor_add "HDMI-0" "eDP-1-1"
+        fi
+        if [[ $(bspc query -D -m "eDP-1-1" | wc -l) -lt 5 ]];
+        then
+            monitor_add "eDP-1-1" "HDMI-0"
+        fi
+        nitrogen --set-auto $HOME/.local/share/wallpapers/DaSadWeb/dual_monitor.png
+      fi
+    else
+      # monitor disconnected
+      xrandr --output eDP-1-1 --primary --mode 1920x1080 --pos 0x0 --rotate normal \
+             --output HDMI-0 --off
+      if [[ $(bspc query -D -m "eDP-1-1" | wc -l) -lt 10 ]];
+      then
+          monitor_remove "HDMI-0" "eDP-1-1"
+      fi
+      nitrogen --set-auto $HOME/.local/share/wallpapers/DaSadWeb/primary.png
+    fi
+}
+
+initial_monitor_setup() {
+  if [[ $(xrandr -q | grep "HDMI-0 connected") ]];
+  then
+    if $SINGLE_MONITOR;
+    then
+      # single monitor
+      xrandr --output eDP-1-1 --off \
+             --output HDMI-0 --primary --mode 1920x1080 --rate 143.98 --pos 1920x0 --rotate normal
+      bspc monitor HDMI-0 -d I II III IV V VI VII VIII IX X
+      # Wallpaper
+      nitrogen --set-auto $HOME/.local/share/wallpapers/DaSadWeb/primary.png
+    else
+      # Dual Monitors
+      xrandr --output eDP-1-1 --mode 1920x1080 --rate 59.98 --pos 0x0 --rotate normal \
+             --output HDMI-0 --primary --mode 1920x1080 --rate 143.98 --pos 1920x0 --rotate normal
+             # --output HDMI-0 --primary --mode 1920x1080 --rate 239.76 --pos 1920x0 --rotate normal
+      bspc monitor eDP-1-1 -d I II III IV V
+      bspc monitor HDMI-0 -d VI VII VIII IX X
+      # Wallpaper
+      nitrogen --set-auto $HOME/.local/share/wallpapers/DaSadWeb/dual_monitor.png
+    fi
+  else
+      # Single monitor (Laptop)
+    bspc monitor -d I II III IV V VI VII VIII IX X
+    bspc monitor -g 1920x1080+0+0
+    # Wallpaper
+    nitrogen --set-auto $HOME/.local/share/wallpapers/DaSadWeb/primary.png
+  fi
+}

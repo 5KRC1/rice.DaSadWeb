@@ -1,0 +1,55 @@
+#! /bin/sh
+
+source ~/.config/bspwm/monitors
+
+# ===Gnome-Keyrings===
+dbus-update-activation-environment --all
+gnome-keyring-daemon --start --components=secrets
+
+
+# ===Monitor Initial===
+if [[ "$1" = 0 ]];
+then
+    initial_monitor_setup
+fi
+
+# ===Startup Apps===
+pgrep -x dunst > /dev/null || dunst &
+pgrep -x sxhkd > /dev/null || sxhkd &
+pgrep -x panel > /dev/null || panel dasadweb &
+pgrep -x solaar > /dev/null || solaar &
+nm-applet &
+
+# ===BSPWM Configuration===
+# looks
+bspc config border_width         2
+bspc config window_gap          12
+
+bspc config split_ratio          0.50
+bspc config borderless_monocle   true
+bspc config gapless_monocle      true
+
+# apps
+bspc rule -a Spotify desktop="^1"
+bspc rule -a firefox desktop="^2"
+bspc rule -a discord desktop="^3"
+bspc rule -a obs desktop="^4"
+bspc rule -a pcmanfm desktop="^5"
+bspc rule -a steam desktop="^5"
+
+bspc rule -a kdenlive desktop="^7"
+bspc rule -a Gimp-2.10 desktop="^8"
+
+mygames=$(ls /run/media/skrci/steam/steamapps | grep appmanifest | sed 's/[^0-9]*//g')
+for game in $mygames; do
+        bspc rule -a steam_app_$game desktop=^10 state=fullscreen follow=on
+done
+
+# cursor
+bspc config pointer_modifier mod1
+bspc config pointer_action1 resize_side
+bspc conifg pointer_action1 resize_corner
+bspc config pointer_action3 move
+
+# ===Monitor On Change===
+on_change_monitor_setup
