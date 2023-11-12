@@ -6,6 +6,7 @@
 - ![firefox]()
 - ![nitrogen]()
 - ![rofi]()
+- ![Xorg]()
 
 ## Setup
 ### Firefox
