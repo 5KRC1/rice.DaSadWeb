@@ -26,7 +26,7 @@ HandlePowerKey=ignore
 ```
 
 ### Firefox
-Installation is 
+Colorscheme install is 
 ![here](
 https://github.com/jannikbuscha/firefox-dracula#%EF%B8%8F-installation
 ).
@@ -48,6 +48,19 @@ Run
 xrandr
 ```
 to get the resolution of your monitor and replace it in `bspwm/monitors`.
+
+### xinitrc
+Copy the file to your `$HOME`, install xorg-xinit and make sure to
+uncomment evereything that you might not need (optimus-manager, 
+picom, ...).
+
+### bspwm
+If you are using `config.lemonbar` you have to uncomment 
+lines in `bspwm/bspwmrc`.
+```bash
+pgrep -x panel > /dev/null || panel dasadweb &
+nm-applet &
+```
 
 ### Else
 Just copying the config files to `~/.config` works

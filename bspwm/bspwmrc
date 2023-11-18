@@ -2,10 +2,6 @@
 
 source ~/.config/bspwm/monitors
 
-# ===Gnome-Keyrings===
-dbus-update-activation-environment --all
-gnome-keyring-daemon --start --components=secrets
-
 
 # ===Monitor Initial===
 if [[ "$1" = 0 ]];
@@ -16,9 +12,8 @@ fi
 # ===Startup Apps===
 pgrep -x dunst > /dev/null || dunst &
 pgrep -x sxhkd > /dev/null || sxhkd &
-pgrep -x panel > /dev/null || panel dasadweb &
-pgrep -x solaar > /dev/null || solaar &
-nm-applet &
+#pgrep -x panel > /dev/null || panel dasadweb &
+#nm-applet &
 
 # ===BSPWM Configuration===
 # looks
