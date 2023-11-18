@@ -12,7 +12,7 @@ lemonbar and dracula colorscheme.
 - ![rofi](https://github.com/davatorium/rofi)
 - ![Xorg](https://www.x.org/wiki/)
 
-other: brightnessctl, alsa-tools, xdotool
+other: brightnessctl, alsa-tools, xdotool, xorg-xinit
 
 ## Setup
 ### rofi
@@ -51,7 +51,7 @@ to get the resolution of your monitor and replace it in `bspwm/monitors`.
 
 ### xinitrc
 Copy the file to your `$HOME`, install xorg-xinit and make sure to
-uncomment evereything that you might not need (optimus-manager, 
+uncomment everything that you might not need (optimus-manager, 
 picom, ...).
 
 ### bspwm
